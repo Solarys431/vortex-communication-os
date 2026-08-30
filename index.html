@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="referrer" content="no-referrer" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; media-src 'self'; frame-src 'self'; font-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests" />
+<title>VORTEX Meet — prototipo per riunioni multilingue</title>
+<meta name="description" data-i18n-attr="content" data-i18n="meta.desc" content="Prototipo funzionale per riunioni multilingue con traduzione simultanea in dieci lingue, sottotitoli tradotti e assistente AI." />
+<meta name="theme-color" content="#070809" />
+<link rel="icon" type="image/png" href="assets/favicon.png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<style>
+  :root{
+    --void:#070809; --panel:#11151a; --panel2:#161b21; --well:#0a0d10;
+    --edge:#2e3a46; --edge-hi:#4a5865; --line:#222b34; --line-soft:rgba(255,255,255,.06);
+    --pgm:#ff2a39; --pvw:#16e27d; --amber:#ffb02e; --cyan:#3fd7ea; --violet:#b06ad9; --violet-glow:rgba(176,106,217,.5);
+    --ink:#e2e9f0; --dim:#a2afbc; --dim2:#83919e; --maxw:1200px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth;overflow-x:hidden}
+  body{background:radial-gradient(1200px 620px at 80% -12%, #16121f 0%, transparent 58%),var(--void);color:var(--ink);font-family:'Saira',system-ui,sans-serif;font-size:17px;line-height:1.62;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  a{color:inherit;text-decoration:none} ::selection{background:var(--violet);color:#fff}
+  a:focus-visible,button:focus-visible{outline:3px solid var(--cyan);outline-offset:3px}
+  .skip-link{position:fixed;top:8px;left:8px;z-index:1000;padding:10px 14px;border-radius:8px;background:var(--ink);color:var(--void);font-weight:700;transform:translateY(-150%)}.skip-link:focus{transform:none}
+  .mono{font-family:'JetBrains Mono',monospace} .cond{font-family:'Saira Condensed',sans-serif}
+  h1,h2,h3{font-family:'Saira',sans-serif;font-weight:700;letter-spacing:-.02em;line-height:1.04}
+  .eyebrow{font-family:'Saira Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:.28em;text-transform:uppercase;color:var(--violet);display:inline-flex;align-items:center;gap:10px}
+  .eyebrow::before{content:"";width:22px;height:1px;background:var(--violet);opacity:.7}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 26px}
+  nav{position:sticky;top:0;z-index:60;background:rgba(7,8,9,.72);backdrop-filter:blur(16px);border-bottom:1px solid var(--line-soft)}
+  .navin{max-width:var(--maxw);margin:0 auto;padding:14px 26px;display:flex;align-items:center;gap:20px}
+  .brand{display:flex;align-items:center;gap:11px;font-weight:700;font-size:21px}
+    .brand .brand-logo{width:26px;height:26px;object-fit:contain;display:block;filter:drop-shadow(0 0 9px rgba(56,204,255,.55))}
+  .brand .dot{width:12px;height:12px;border-radius:50%;background:var(--violet);box-shadow:0 0 14px var(--violet-glow);animation:pulse 2s infinite}
+  .brand small{font-family:'Saira Condensed',sans-serif;font-weight:600;font-size:11px;letter-spacing:.22em;color:var(--dim2);text-transform:uppercase}
+  .back{font-size:14px;color:var(--dim);border:1px solid var(--line);border-radius:8px;padding:6px 12px} .back:hover{color:var(--ink);border-color:var(--edge)}
+  .navright{margin-left:auto;display:flex;align-items:center;gap:14px}
+  .repo-link{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:var(--dim);border:1px solid var(--line);border-radius:8px;padding:6px 10px}
+  .repo-link:hover{color:var(--ink);border-color:var(--edge-hi)}
+  .langsw{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700}
+  .langsw button{background:transparent;color:var(--dim2);border:0;padding:6px 10px;cursor:pointer}
+  .langsw button.on{background:var(--violet);color:#fff}
+  .navcta{background:var(--violet);color:#fff;padding:9px 17px;border-radius:9px;font-weight:600;font-size:14.5px}
+  section{padding:70px 0} .hero{padding:64px 0 20px}
+  .hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:46px;align-items:center}
+  .hero h1{font-size:clamp(36px,5vw,62px);margin:18px 0 0} .hero h1 .hl{color:var(--violet)}
+  .hero .lead{font-size:19px;color:var(--dim);max-width:520px;margin-top:18px} .hero .lead b{color:var(--ink);font-weight:600}
+  .hero-cta{display:flex;gap:14px;margin-top:28px;flex-wrap:wrap}
+  .btn{padding:13px 22px;border-radius:10px;font-weight:600;font-size:15.5px;cursor:pointer;border:1px solid transparent;transition:transform .16s}
+  .btn.primary{background:var(--violet);color:#fff;box-shadow:0 14px 34px -12px var(--violet-glow)} .btn.primary:hover{transform:translateY(-2px)}
+  .btn.ghost{background:transparent;color:var(--ink);border-color:var(--edge)} .btn.ghost:hover{border-color:var(--edge-hi)}
+  .device{background:linear-gradient(180deg,#0e1318,#0a0d11);border:1px solid var(--edge);border-radius:16px;padding:14px;box-shadow:0 40px 90px -30px rgba(0,0,0,.8)}
+  .dev-bar{display:flex;align-items:center;gap:10px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--dim2);padding:2px 4px 12px}
+  .dev-bar .liveb{margin-left:auto;display:flex;align-items:center;gap:7px;color:var(--violet);font-weight:700}
+  .dev-bar .liveb i{width:9px;height:9px;border-radius:50%;background:var(--violet);box-shadow:0 0 10px var(--violet-glow);animation:pulse 1.4s infinite;font-style:normal}
+  .grid4{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+  .ptile{position:relative;aspect-ratio:16/10;border-radius:9px;border:1px solid var(--line);background:linear-gradient(160deg,#1a2230,#0d1219);overflow:hidden;display:flex;align-items:center;justify-content:center}
+  .ptile .av{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Saira',sans-serif;font-weight:700;font-size:20px;color:#fff}
+  .ptile.speaking{border-color:var(--violet);box-shadow:0 0 0 1px var(--violet),0 0 20px -6px var(--violet-glow)}
+  .ptile .nm{position:absolute;bottom:0;left:0;right:0;display:flex;justify-content:space-between;font-family:'Saira Condensed',sans-serif;font-weight:600;font-size:11px;padding:3px 8px;background:rgba(4,6,9,.66)}
+  .ptile .nm .lg{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--cyan)}
+  .capbar{margin-top:10px;background:rgba(4,6,9,.7);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+  .capbar .src-t{font-size:15px;color:var(--dim)} .capbar .src-t .who{font-family:'Saira Condensed',sans-serif;font-weight:700;color:var(--ink)}
+  .capbar .tr{font-size:15.5px;color:var(--ink);margin-top:7px;padding-top:7px;border-top:1px dashed var(--line);min-height:20px}
+  .flag{font-family:'JetBrains Mono',monospace;font-size:9.5px;font-weight:700;padding:2px 6px;border-radius:4px;background:var(--well);color:var(--cyan)} .flag.v{color:var(--violet)}
+  .asstnote{margin-top:10px;border:1px solid rgba(176,106,217,.35);border-radius:10px;padding:11px 13px;background:linear-gradient(180deg,rgba(176,106,217,.06),transparent)}
+  .asstnote .h{font-family:'Saira Condensed',sans-serif;font-weight:700;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--violet);display:flex;align-items:center;gap:8px}
+  .asstnote .h i{width:8px;height:8px;border-radius:50%;background:var(--violet);box-shadow:0 0 9px var(--violet-glow);animation:pulse 1.3s infinite;font-style:normal}
+  .asstnote ul{list-style:none;margin:8px 0 0} .asstnote li{font-size:13px;color:var(--dim);padding:2px 0 2px 16px;position:relative}
+  .asstnote li::before{content:"›";position:absolute;left:2px;color:var(--violet)}
+  .sec-head{max-width:760px} .sec-head h2{font-size:clamp(28px,3.6vw,42px);margin:14px 0 0} .sec-head p{color:var(--dim);font-size:18px;margin-top:14px}
+  .prod{display:grid;grid-template-columns:1fr 1fr;gap:46px;align-items:center;margin-top:38px}
+  .prod.rev .prod-copy{order:2} .prod.rev .prod-ui{order:1}
+  .prod-copy h3{font-size:clamp(24px,3vw,34px)} .prod-copy .sub{color:var(--dim);font-size:17px;margin-top:12px}
+  .flist{list-style:none;margin:20px 0 0;display:flex;flex-direction:column;gap:10px}
+  .flist li{display:flex;gap:11px;font-size:15.5px} .flist li::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--violet);margin-top:9px;flex:none;box-shadow:0 0 8px var(--violet-glow)}
+  .panelbox{background:linear-gradient(180deg,#0f1318,#0a0d11);border:1px solid var(--edge);border-radius:14px;padding:14px;box-shadow:0 34px 80px -34px rgba(0,0,0,.75)}
+  .langchips{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+  .langchips span{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;padding:6px 11px;border-radius:20px;border:1px solid var(--line);background:var(--panel);color:var(--dim)}
+  .closing{text-align:center;padding:90px 0 60px} .closing h2{font-size:clamp(34px,5vw,58px)} .closing h2 .v{color:var(--violet)}
+  .closing p{color:var(--dim);font-size:18px;margin:18px auto 0;max-width:520px} .closing .hero-cta{justify-content:center}
+  footer{border-top:1px solid var(--line-soft);padding:36px 0 56px;color:var(--dim2)}
+  .footin{display:flex;flex-wrap:wrap;gap:16px;align-items:center}
+  .footlinks{margin-left:auto;display:flex;gap:20px;font-size:14px} .footlinks a:hover{color:var(--ink)}
+  .foot-copy{width:100%;font-size:12.5px;font-family:'JetBrains Mono',monospace;margin-top:8px}
+  .rv{opacity:0;transform:translateY(22px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.8,.2,1)} .rv.in{opacity:1;transform:none}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+  @media (max-width:900px){.hero-grid,.prod,.prod.rev{grid-template-columns:1fr;gap:32px}.prod.rev .prod-copy,.prod.rev .prod-ui{order:0}}
+  @media (max-width:560px){.navin{padding-left:20px;padding-right:20px}.back,.navcta{display:none}.langsw{flex-shrink:0}.hero-grid>*{min-width:0}}
+  @media (max-width:400px){.brand{font-size:18px;gap:8px}.brand .brand-logo{width:22px;height:22px}.brand small{display:none}.navin{gap:8px}.navright{gap:5px}.repo-link{font-size:10px;padding:6px}.langsw button{padding:6px 7px}.device{padding:10px;overflow:hidden}.dev-bar{font-size:9px;letter-spacing:.08em;gap:6px;flex-wrap:wrap}.dev-bar .liveb{margin-left:0}.footlinks{width:100%;margin-left:0;gap:12px;flex-wrap:wrap}}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important}.rv{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main" data-i18n="skip">Salta al contenuto</a>
+<nav><div class="navin">
+  <a class="brand" href="../vortex-site/"><img src="assets/vortex-mark.png" class="brand-logo" alt="">VORTEX<span class="dot"></span><small>Meet</small></a>
+  <a class="back" href="../vortex-site/">← <span data-i18n="nav.eco">Ecosistema</span></a>
+  <div class="navright">
+    <a class="repo-link" href="https://github.com/Solarys431/vortex-communication-os" aria-label="GitHub repository">GitHub</a>
+    <div class="langsw" role="group" aria-label="Lingua / Language"><button type="button" data-lang="it" class="on" aria-pressed="true">IT</button><button type="button" data-lang="en" aria-pressed="false">EN</button></div>
+    <a class="navcta" href="#call" data-i18n="nav.cta">Scopri di più</a>
+  </div>
+</div></nav>
+
+<header class="hero" id="main"><div class="wrap"><div class="hero-grid">
+  <div>
+    <span class="eyebrow" data-i18n="hero.eyebrow">VORTEX Meet · prototipo funzionale</span>
+    <h1 data-i18n-html="hero.h1">Ognuno parla la sua lingua. <span class="hl">VORTEX traduce.</span></h1>
+    <p class="lead" data-i18n-html="hero.lead">Prototipo per riunioni multilingue con <b>traduzione simultanea in dieci lingue</b>, sottotitoli tradotti, tracce audio dedicate e un <b>assistente AI</b> che genera verbale e sintesi a fine sessione.</p>
+    <div class="hero-cta">
+      <a class="btn primary" href="#call" data-i18n="hero.cta1">Scopri di più</a>
+    </div>
+  </div>
+  <div class="device" aria-hidden="true">
+    <div class="dev-bar"><span>VORTEX&nbsp;STAGE</span><span>·</span><span>NUOVA&nbsp;STANZA</span><span class="liveb"><i></i>LIVE</span></div>
+    <video src="assets/software-reale/clip-meet.mp4" poster="assets/software-reale/meet-lobby.jpg" autoplay muted loop playsinline preload="metadata" style="width:100%;display:block;border-radius:10px;border:1px solid var(--line)"></video>
+    <div class="asstnote">
+      <div class="h"><i></i><span data-i18n="hero.asst">Tre modalità: traduci, assisti o resta privato</span></div>
+      <ul>
+        <li data-i18n="hero.n1">Traduzione: sottotitoli e voce dal vivo</li>
+        <li data-i18n="hero.n2">Assistente: verbale e sintesi a fine riunione</li>
+      </ul>
+    </div>
+  </div>
+</div></div></header>
+
+<!-- CALL AI -->
+<section id="call"><div class="wrap">
+  <div class="prod">
+    <div class="prod-copy rv">
+      <span class="eyebrow" data-i18n="call.eyebrow">La riunione con l'AI</span>
+      <h2 style="font-size:clamp(26px,3.4vw,40px);margin-top:14px" data-i18n="call.h2">Una riunione che prende appunti per te.</h2>
+      <p class="sub" data-i18n="call.sub">Una riunione video con un assistente che ascolta e trascrive; a fine sessione produce verbale, sintesi e attività da seguire.</p>
+      <ul class="flist">
+        <li data-i18n="call.f1">Verbale e sintesi generati a fine riunione</li>
+        <li data-i18n="call.f2">Elenco delle decisioni e delle cose da fare</li>
+        <li data-i18n="call.f3">Ricerca le informazioni durante la riunione</li>
+        <li data-i18n="call.f4">Disponibile come prodotto autonomo o integrato in VORTEX</li>
+      </ul>
+    </div>
+    <div class="prod-ui rv"><div class="panelbox">
+      <div class="asstnote" style="margin-top:0">
+        <div class="h"><i></i><span data-i18n="call.recap">Riepilogo della riunione</span></div>
+        <ul>
+          <li data-i18n="call.r1">Decisione: diretta confermata per le 21:00</li>
+          <li data-i18n="call.r2">Da fare: Sara → esterna da Milano, Duomo</li>
+          <li data-i18n="call.r3">Da fare: James → collegamento da Londra</li>
+          <li data-i18n="call.r4">Aperto: budget grafiche, da rivedere domani</li>
+        </ul>
+      </div>
+    </div></div>
+  </div>
+</div></section>
+
+<!-- TRADUZIONE -->
+<section id="traduzione"><div class="wrap">
+  <div class="sec-head rv"><span class="eyebrow" data-i18n="tr.eyebrow">Traduzione simultanea</span>
+    <h2 data-i18n="tr.h2">Parla la tua lingua. VORTEX traduce.</h2>
+    <p data-i18n="tr.p">Traduzione parlata e scritta in tempo reale nelle dieci lingue supportate, pensata per riunioni internazionali e future integrazioni broadcast.</p>
+  </div>
+  <div class="prod">
+    <div class="prod-ui rv">
+      <div style="border:1px solid rgba(255,255,255,.09);border-radius:14px;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.55)">
+        <img src="assets/software-reale/meet-stanza-reale.jpg" alt="Stanza VORTEX Stage con traduzione simultanea AI dall'italiano all'inglese" loading="lazy" style="width:100%;display:block">
+      </div>
+      <p style="text-align:center;font:600 11px/1.5 ui-monospace,monospace;letter-spacing:.14em;text-transform:uppercase;color:#8a8f98;margin:12px 0 0" data-i18n="tr.cap">Modulo di traduzione simultanea AI · voce e sottotitoli</p>
+    </div>
+    <div class="prod-copy rv">
+      <h3 data-i18n="tr.h3">In riunione o nei flussi broadcast.</h3>
+      <p class="sub" data-i18n="tr.sub">Ogni partecipante può ascoltare e leggere la traduzione nella lingua selezionata. Un canale dati è predisposto per future integrazioni broadcast.</p>
+      <div class="langchips">
+        <span>Italiano</span><span>English</span><span>Español</span><span>Français</span><span>Deutsch</span><span>Português</span><span>Nederlands</span><span>Русский</span><span>日本語</span><span>中文</span>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<!-- SOTTOTITOLI -->
+<section id="cc"><div class="wrap">
+  <div class="prod rev">
+    <div class="prod-copy rv">
+      <span class="eyebrow" data-i18n="cc.eyebrow">Sottotitoli dal vivo</span>
+      <h2 style="font-size:clamp(26px,3.4vw,40px);margin-top:14px" data-i18n="cc.h2">Le parole, sullo schermo.</h2>
+      <p class="sub" data-i18n="cc.sub">Sottotitoli tradotti in tempo reale nella lingua selezionata, utili per accessibilità e ambienti rumorosi.</p>
+      <ul class="flist">
+        <li data-i18n="cc.f1">Sottotitoli dal vivo nella lingua di ciascuno</li>
+        <li data-i18n="cc.f2">Trascrizione ricercabile nelle riunioni con memoria</li>
+        <li data-i18n="cc.f3">Sottotitoli attribuiti al partecipante</li>
+        <li data-i18n="cc.f4">Canale dati predisposto per integrazioni broadcast</li>
+      </ul>
+    </div>
+    <div class="prod-ui rv"><div class="panelbox">
+      <div class="dev-bar"><span>SOTTOTITOLI&nbsp;LIVE</span><span class="liveb"><i></i>ON</span></div>
+      <div class="capbar" style="margin-top:0"><div class="src-t"><span class="who">Sara</span>: Siamo pronti per il lancio del telegiornale.</div></div>
+      <div class="capbar"><div class="src-t"><span class="who">James</span>: <span class="flag">EN</span> Standing by, ready when you are.</div><div class="tr"><span class="flag v">IT</span> In attesa, pronti quando volete.</div></div>
+    </div></div>
+  </div>
+</div></section>
+
+<section class="closing" id="demo"><div class="wrap rv">
+  <span class="eyebrow" style="justify-content:center" data-i18n="cl.eyebrow">VORTEX Meet</span>
+  <h2 data-i18n-html="cl.h2">Una stanza. <span class="v">Dieci lingue.</span></h2>
+  <p data-i18n="cl.p">Prototipo funzionale da validare sul campo prima dell'impiego in produzione.</p>
+  <div class="hero-cta">
+    <a class="btn primary" href="../vortex-site/" data-i18n="cl.cta2">Torna all'ecosistema</a>
+  </div>
+</div></section>
+
+<footer><div class="wrap"><div class="footin">
+  <a class="brand" href="../vortex-site/"><img src="assets/vortex-mark.png" class="brand-logo" alt="">VORTEX<span class="dot"></span></a>
+  <div class="footlinks"><a href="../vortex-site/" data-i18n="nav.eco">Ecosistema</a><a href="../vortex-control/">Regia</a><a href="../vortex-intercom/">Intercom</a><a href="../vortex-ai-graphic-studio/" data-i18n="nav.graphics">Grafiche</a></div>
+  <div class="foot-copy">© 2026 VORTEX · comms — <span data-i18n="foot.rights">tutti i diritti riservati</span> · <span data-i18n="foot.privacy">La landing non usa cookie, analytics, profilazione o raccolta dati</span></div>
+</div></div></footer>
+
+<script>
+(function(){
+  "use strict";
+  var I18N={
+    it:{
+      "meta.title":"VORTEX Meet — prototipo per riunioni multilingue",
+      "skip":"Salta al contenuto",
+      "meta.desc":"Prototipo funzionale per riunioni multilingue con traduzione simultanea in dieci lingue, sottotitoli tradotti e assistente AI.",
+      "nav.eco":"Ecosistema","nav.graphics":"Grafiche","nav.cta":"Scopri di più",
+      "hero.eyebrow":"VORTEX Meet · prototipo funzionale","hero.h1":"Ognuno parla la sua lingua. <span class='hl'>VORTEX traduce.</span>",
+      "hero.lead":"Prototipo per riunioni multilingue con <b>traduzione simultanea in dieci lingue</b>, sottotitoli tradotti, tracce audio dedicate e un <b>assistente AI</b> che genera verbale e sintesi a fine sessione.",
+      "hero.cta1":"Scopri di più","hero.cta2":"Come funziona","hero.asst":"Tre modalità: traduci, assisti o resta privato",
+      "hero.n1":"Traduzione: sottotitoli e voce dal vivo","hero.n2":"Assistente: verbale e sintesi a fine riunione",
+      "call.eyebrow":"La riunione con l'AI","call.h2":"Una riunione che prende appunti per te.",
+      "call.sub":"Una riunione video con un assistente che ascolta e trascrive; a fine sessione produce verbale, sintesi e attività da seguire.",
+      "call.f1":"Verbale e sintesi generati a fine riunione","call.f2":"Elenco delle decisioni e delle cose da fare","call.f3":"Ricerca le informazioni durante la riunione","call.f4":"Disponibile come prodotto autonomo o integrato in VORTEX",
+      "call.recap":"Riepilogo della riunione","call.r1":"Decisione: diretta confermata per le 21:00","call.r2":"Da fare: Sara → esterna da Milano, Duomo","call.r3":"Da fare: James → collegamento da Londra","call.r4":"Aperto: budget grafiche, da rivedere domani",
+      "tr.eyebrow":"Traduzione simultanea","tr.h2":"Parla la tua lingua. VORTEX traduce.",
+      "tr.p":"Traduzione parlata e scritta in tempo reale nelle dieci lingue supportate, pensata per riunioni internazionali e future integrazioni broadcast.",
+      "tr.h3":"In riunione o nei flussi broadcast.","tr.sub":"Ogni partecipante può ascoltare e leggere la traduzione nella lingua selezionata. Un canale dati è predisposto per future integrazioni broadcast.",
+      "tr.cap":"Modulo di traduzione simultanea AI · voce e sottotitoli",
+      "cc.eyebrow":"Sottotitoli dal vivo","cc.h2":"Le parole, sullo schermo.",
+      "cc.sub":"Sottotitoli tradotti in tempo reale nella lingua selezionata, utili per accessibilità e ambienti rumorosi.",
+      "cc.f1":"Sottotitoli dal vivo nella lingua di ciascuno","cc.f2":"Trascrizione ricercabile nelle riunioni con memoria","cc.f3":"Sottotitoli attribuiti al partecipante","cc.f4":"Canale dati predisposto per integrazioni broadcast",
+      "cl.eyebrow":"VORTEX Meet","cl.h2":"Una stanza. <span class='v'>Dieci lingue.</span>",
+      "cl.p":"Prototipo funzionale da validare sul campo prima dell'impiego in produzione.","cl.cta1":"Scopri di più","cl.cta2":"Torna all'ecosistema",
+      "foot.rights":"tutti i diritti riservati","foot.privacy":"La landing non usa cookie, analytics, profilazione o raccolta dati"
+    },
+    en:{
+      "meta.title":"VORTEX Meet — multilingual meeting prototype",
+      "skip":"Skip to content",
+      "meta.desc":"A functional prototype for multilingual meetings with simultaneous translation across ten languages, translated captions and an AI assistant.",
+      "nav.eco":"Ecosystem","nav.graphics":"Graphics","nav.cta":"Learn more",
+      "hero.eyebrow":"VORTEX Meet · functional prototype","hero.h1":"Everyone speaks their language. <span class='hl'>VORTEX translates.</span>",
+      "hero.lead":"A prototype for multilingual meetings with <b>simultaneous translation across ten languages</b>, translated captions, dedicated audio tracks and an <b>AI assistant</b> that generates minutes and a summary after the session.",
+      "hero.cta1":"Learn more","hero.cta2":"How it works","hero.asst":"Three modes: translate, assist or stay private",
+      "hero.n1":"Translation: live captions and voice","hero.n2":"Assistant: minutes and summary after the meeting",
+      "call.eyebrow":"The AI call","call.h2":"A call that takes the notes for you.",
+      "call.sub":"A video meeting with an assistant that listens and transcribes; after the session it produces minutes, a summary and follow-up items.",
+      "call.f1":"Minutes and summary generated after the meeting","call.f2":"List of decisions and action items","call.f3":"Looks up information during the meeting","call.f4":"Works on its own or inside VORTEX",
+      "call.recap":"Meeting recap","call.r1":"Decision: live confirmed for 21:00","call.r2":"To do: Sara → live shot from Milan, Duomo","call.r3":"To do: James → remote from London","call.r4":"Open: graphics budget, review tomorrow",
+      "tr.eyebrow":"Simultaneous translation","tr.h2":"Speak your language. VORTEX translates.",
+      "tr.p":"Real-time spoken and written translation across the ten supported languages, designed for international meetings and future broadcast integrations.",
+      "tr.h3":"In meetings or broadcast workflows.","tr.sub":"Each participant can hear and read the translation in the selected language. A data channel is prepared for future broadcast integrations.",
+      "tr.cap":"AI simultaneous translation module · voice and captions",
+      "cc.eyebrow":"Live captions","cc.h2":"Words, on screen.",
+      "cc.sub":"Real-time translated captions in the selected language, useful for accessibility and noisy environments.",
+      "cc.f1":"Live captions in each person's language","cc.f2":"Searchable transcript in calls with memory","cc.f3":"Captions attributed to the participant","cc.f4":"Data channel prepared for broadcast integrations",
+      "cl.eyebrow":"VORTEX Meet","cl.h2":"One room. <span class='v'>Ten languages.</span>",
+      "cl.p":"A functional prototype to validate in the field before production use.","cl.cta1":"Learn more","cl.cta2":"Back to the ecosystem",
+      "foot.rights":"all rights reserved","foot.privacy":"This landing page uses no cookies, analytics, profiling or data collection"
+    }
+  };
+  function applyLang(lang){
+    var d=I18N[lang]||I18N.it; document.documentElement.lang=lang;
+    document.title=d["meta.title"]||document.title;
+    document.querySelectorAll('[data-i18n]').forEach(function(el){var k=el.getAttribute('data-i18n'); if(d[k]!=null) el.textContent=d[k];});
+    document.querySelectorAll('[data-i18n-html]').forEach(function(el){var k=el.getAttribute('data-i18n-html'); if(d[k]!=null) el.innerHTML=d[k];});
+    document.querySelectorAll('[data-i18n-attr]').forEach(function(el){var a=el.getAttribute('data-i18n-attr'),k=el.getAttribute('data-i18n'); if(d[k]!=null) el.setAttribute(a,d[k]);});
+    document.querySelectorAll('.langsw button').forEach(function(b){var selected=b.getAttribute('data-lang')===lang;b.classList.toggle('on',selected);b.setAttribute('aria-pressed',selected?'true':'false');});
+  }
+  var q=null; try{q=new URLSearchParams(location.search).get('lang');}catch(e){}
+  if(q!=='it'&&q!=='en') q=null;
+  applyLang(q||((navigator.language||'it').toLowerCase().indexOf('it')===0?'it':'en'));
+  document.querySelectorAll('.langsw button').forEach(function(b){b.addEventListener('click',function(){applyLang(b.getAttribute('data-lang'));});});
+  var io=new IntersectionObserver(function(e){e.forEach(function(x){if(x.isIntersecting){x.target.classList.add('in');io.unobserve(x.target);}});},{threshold:.14});
+  document.querySelectorAll('.rv').forEach(function(el){io.observe(el);});
+  // ciclo di traduzione nell'hero
+  var seq=[
+    {who:"James",fl:"EN",src:"We go live in thirty seconds.",tr:"Andiamo in onda tra trenta secondi.",tile:0},
+    {who:"Sara",fl:"IT",src:"Ricevuto, l'esterna è pronta.",tr:"Copy that, the live shot is ready.",tile:1},
+    {who:"Lucía",fl:"ES",src:"La conexión está lista.",tr:"Il collegamento è pronto.",tile:2},
+    {who:"Kenji",fl:"JA",src:"準備できました。",tr:"Siamo pronti.",tile:3}
+  ];
+  if(!window.matchMedia('(prefers-reduced-motion:reduce)').matches){
+    var i=0, tiles=[0,1,2,3].map(function(n){return document.getElementById('pt'+n);});
+    setInterval(function(){
+      i=(i+1)%seq.length; var s=seq[i];
+      document.querySelectorAll('.grid4 .ptile').forEach(function(t,idx){t.classList.toggle('speaking',idx===s.tile);});
+      var w=document.getElementById('capWho'),sc=document.getElementById('capSrc'),tr=document.getElementById('capTr');
+      if(w)w.textContent=s.who; if(sc)sc.textContent=s.src; if(tr)tr.textContent=s.tr;
+    },2600);
+  }
+})();
+</script>
+</body>
+</html>
